@@ -2,9 +2,6 @@ package com.chenglun;
 
 import org.junit.Test;
 
-/**
- * Created by chenglun on 24/12/2016.
- */
 public class MainTest {
     /* TODO:
       1. client send req (dest, topic)
@@ -48,12 +45,6 @@ public class MainTest {
     public void testClient(){
 
         Server();
-        Client();
-        Client();
-        Client();
-        Client();
-        Client();
-        Client();
         Client();
 
         Sleep(10000);

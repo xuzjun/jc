@@ -1,50 +1,73 @@
 package com.chenglun;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * Created by chenglun on 25/12/2016.
  */
 public class StockQuotationService {
 
-
-    public static class PullerThread extends  Thread{
-        private Puller puller;
-        public PullerThread(String url){
-            this.puller = new Puller(url);
+    public static class DayQuotationPuller {
+        public static interface Handler{
+            void handle(String msg);
         }
-        @Override
-        public void run() {
+        private Puller puller;
+        private Handler handle;
+        public DayQuotationPuller(String url, Handler handle){
+            this.puller = new Puller(url);
+            System.out.println("Puller url:" + url);
+            this.handle = handle;
+        }
+
+        public void pulling(){
             this.puller.connect();
-            while(!this.isInterrupted()){
-                String msg = this.puller.pull();
-                System.out.println("pull msg:" + msg);
+            while(!Thread.currentThread().isInterrupted()){
+                String msg = puller.pull();
+                if(this.handle != null){
+                    this.handle.handle(msg);
+                }
                 if(msg.equals("")){
                     break;
                 }
             }
-            puller.close();
-            System.out.println("Puller thread is quit!");
+            this.puller.close();
         }
     }
 
-    public static class PusherThread extends  Thread{
+    public static class DayQuotationPusher{
         private Pusher pusher;
-        public PusherThread(String url){
+        public DayQuotationPusher(String url){
             this.pusher = new Pusher(url);
+            System.out.println("pusher url: " + url);
         }
 
-        @Override
-        public void run() {
+        public void pushing(){
             this.pusher.bind();
 
             int cnt = 0;
-            while(!this.isInterrupted()){
-                this.pusher.push(String.format("Push %d msg from--> %s", cnt++, this.pusher.getUrl()));
+            while(!Thread.currentThread().isInterrupted()){
+                String msg = String.format("Push %d msg from--> %s", cnt++, this.pusher.getUrl());
+                this.pusher.push(msg);
                 if(cnt >= 20){
                     this.pusher.push(""); // push an empty-string for puller quit
                     break;
                 }
             }
             this.pusher.close();
+        }
+    }
+
+    public static class PusherThread extends  Thread{
+        private DayQuotationPusher pusher;
+        public PusherThread(String url){
+            this.pusher = new DayQuotationPusher(url);
+        }
+
+        @Override
+        public void run() {
+            this.pusher.pushing();
             System.out.println("Pusher thread is quit!");
         }
     }
@@ -53,14 +76,17 @@ public class StockQuotationService {
 
         private Requester req;
         public Client(String serverUrl){
-
             this.req = new Requester(serverUrl);
             this.req.connect(); // block and wait for server(reply) bind
         }
-        public String getTopicPushInfo(String topic, String stockCode, String startDate, String endDate){
+        public String call(String topic, String stockCode, String startDate, String endDate){
             //TODO: req.send(String.format("%s %s %s %s", topic, stockCode, startDate, endDate), 0);
             req.send(topic);
             return this.req.recv();
+        }
+
+        public DayQuotationPuller makePuller(String url, DayQuotationPuller.Handler handle){
+            return new DayQuotationPuller(url, handle);
         }
 
         public void close() {
@@ -68,83 +94,61 @@ public class StockQuotationService {
         }
     }
 
-    public static interface IServer{
-        public String getTopicUrl(String topic, String stockCode, String startDate, String endDate);
+    public static interface IService{
+        public String server(String topic, String stockCode, String startDate, String endDate);
         public void close();
     }
 
-    public static class Service implements  IServer{
-        private int pusherPortNo = 6667;
-        private String topicUrl = "tcp://localhost:%d";
-        private PusherThread pusher = null;
-        public Service(){
-        }
-        @Override
-        public String getTopicUrl(String topic, String stockCode, String startDate, String endDate) {
-            String url = String.format(topicUrl, pusherPortNo++);
-            pusher = new PusherThread(url);
-            pusher.start();
-            return url;
-        }
-        @Override
-        public void close(){
-            if(pusher != null) {
-                try {
-                    this.pusher.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                pusher = null;
-            }
-        }
-    }
-    public static class Server extends Thread{
-
+    public static class Server {
         private Replier rep;
-        private IServer iServer;
 
-        public Server(String localUrl){
-            this.iServer = new Service();
+        public Server(String localUrl) {
             this.rep = new Replier(localUrl);
         }
 
+        public void addService(String topic, IService service) {
+            if(topicMethodMap.containsKey(topic)) {
+                topicMethodMap.replace(topic, service);
+            }
+            else{
+                topicMethodMap.put(topic, service);
+            }
+        }
 
+        public void removeService(String topic) {
+            topicMethodMap.remove(topic);
+        }
 
-        @Override
-        public void run(){
+        private HashMap<String, IService> topicMethodMap = new HashMap<>();
+        public void run() {
             rep.bind();
+            System.out.println("server runing...");
 
-            while(!isInterrupted())
-            {
-                System.out.println("server runing...");
+            while (!Thread.currentThread().isInterrupted()) {
+                //TODO: topic ==> Object
                 String topic = this.rep.recv();
                 System.out.println("server recv :" + topic);
 
-                if(topic.equals("topic_stock_day_quotation")) {
-                    if(this.iServer != null) {
-                        String topicUrl = this.iServer.getTopicUrl(topic, null, null, null);//TODO:
-                        this.rep.send(topicUrl);
-                        System.out.println("server send:" + topicUrl);
-                    }
-                    else{
-                        //TODO: ErrorPrint...
-                    }
-                }
-                else{
-                    //TODO:Error input : no valid topic
+                IService service = topicMethodMap.get(topic);
+                if (service != null) {
+                    //TODO Return value ==> Object
+                    String topicUrl = service.server(topic, null, null, null);
+                    this.rep.send(topicUrl);
+                    System.out.println("server send:" + topicUrl);
+                } else {
+                    //TODO: PrintWarning("No Topic register");
                 }
             }
-            this.close();
         }
 
-        private void close(){
-            this.iServer.close();
-            System.out.println("IServer Closed!");
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        public void close(){
+            Iterator iter = topicMethodMap.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<String, IService> entry = (Map.Entry<String, IService>) iter.next();
+                IService service = entry.getValue();
+                service.close();
             }
+            this.topicMethodMap.clear();
             this.rep.close();
         }
     }

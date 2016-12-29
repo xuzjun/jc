@@ -7,6 +7,8 @@ import org.zeromq.ZMQ;
  */
 public class Puller {
 
+    public final String STOP_MSG = "";
+
     private String url;
     private ZMQ.Context context;
     private ZMQ.Socket puller;
@@ -23,6 +25,10 @@ public class Puller {
 
     public String pull(){
         return new String(this.puller.recv(0));
+    }
+
+    public boolean isEnd(){
+
     }
 
     public void close(){

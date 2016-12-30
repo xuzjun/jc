@@ -1,0 +1,28 @@
+<component name="libraryTable">
+  <library name="io.grpc:grpc-netty:1.0.3" type="repository">
+    <properties maven-id="io.grpc:grpc-netty:1.0.3" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/grpc-netty-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grpc-core-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-19.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grpc-context-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsr305-3.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-handler-proxy-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-transport-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-buffer-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-common-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-resolver-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-codec-socks-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-codec-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-codec-http-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-codec-http2-4.1.6.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/netty-handler-4.1.6.Final.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/grpc-netty-1.0.3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/grpc-netty-1.0.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

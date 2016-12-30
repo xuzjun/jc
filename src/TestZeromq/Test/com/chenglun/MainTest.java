@@ -94,7 +94,7 @@ public class MainTest {
 
 
     //TODO:
-    public void ThriftServer(){
+    public void grpcServer(){
         Thread sh = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -107,12 +107,12 @@ public class MainTest {
         });
         sh.start();
     }
-    public void ThriftClient(){
+    public void grpcClient(){
 
     }
     @Test
     public void testThriftServer(){
-        ThriftServer();
-        ThriftClient();
+        grpcServer();
+        grpcClient();
     }
 }

@@ -1,0 +1,22 @@
+<component name="libraryTable">
+  <library name="io.grpc:grpc-protobuf:1.0.3" type="repository">
+    <properties maven-id="io.grpc:grpc-protobuf:1.0.3" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/grpc-protobuf-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-19.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/protobuf-java-util-3.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/protobuf-java-3.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gson-2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grpc-core-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grpc-context-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsr305-3.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grpc-protobuf-lite-1.0.3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/grpc-protobuf-1.0.3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/grpc-protobuf-1.0.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

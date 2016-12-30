@@ -19,6 +19,8 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="org.apache.thrift:libthrift:0.9.3" level="project" />
+    <orderEntry type="library" name="io.grpc:grpc-netty:1.0.3" level="project" />
+    <orderEntry type="library" name="io.grpc:grpc-protobuf:1.0.3" level="project" />
+    <orderEntry type="library" name="io.grpc:grpc-stub:1.0.3" level="project" />
   </component>
 </module>

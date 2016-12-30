@@ -28,7 +28,7 @@ public class StockQuotationService {
                 if(this.handle != null){
                     this.handle.handle(msg);
                 }
-                if(msg.equals("")){
+                if(puller.isEndMsg(msg)){
                     break;
                 }
             }
@@ -51,7 +51,7 @@ public class StockQuotationService {
                 String msg = String.format("Push %d msg from--> %s", cnt++, this.pusher.getUrl());
                 this.pusher.push(msg);
                 if(cnt >= 20){
-                    this.pusher.push(""); // push an empty-string for puller quit
+                    this.pusher.pushEndMsg();
                     break;
                 }
             }

@@ -91,9 +91,28 @@ public class MainTest {
 
     }
 
+
+
+    //TODO:
+    public void ThriftServer(){
+        Thread sh = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = "tcp://localhost:6666";
+                StockQuotationService.Server s = new StockQuotationService.Server(url);
+                s.addService("topic_stock_day_quotation",new Service());
+                s.run();
+                s.close();
+            }
+        });
+        sh.start();
+    }
+    public void ThriftClient(){
+
+    }
     @Test
-    public void testServer(){
-        //StockQuotationService.Server s = new StockQuotationService.Server("tcp://localhost:6666");
-        //s.start();
+    public void testThriftServer(){
+        ThriftServer();
+        ThriftClient();
     }
 }

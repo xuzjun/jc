@@ -10,6 +10,8 @@ public class Pusher {
     private ZMQ.Socket pusher;
     private String url;
 
+    public final String END_MSG = "";
+
     public String getUrl(){
         return url;
     }
@@ -29,6 +31,9 @@ public class Pusher {
             this.pusher.send(msg.getBytes(), 0);
         else
             ;//Error Handler && log
+    }
+    public void pushEndMsg(){
+        this.push(END_MSG);
     }
 
     public void close(){

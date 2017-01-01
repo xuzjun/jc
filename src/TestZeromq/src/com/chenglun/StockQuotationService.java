@@ -10,25 +10,27 @@ import java.util.Map;
 public class StockQuotationService {
 
     public static class DayQuotationPuller {
-        public static interface Handler{
+        public static interface Handler {
             void handle(String msg);
         }
+
         private Puller puller;
         private Handler handle;
-        public DayQuotationPuller(String url, Handler handle){
+
+        public DayQuotationPuller(String url, Handler handle) {
             this.puller = new Puller(url);
             System.out.println("Puller url:" + url);
             this.handle = handle;
         }
 
-        public void pulling(){
+        public void pulling() {
             this.puller.connect();
-            while(!Thread.currentThread().isInterrupted()){
+            while (!Thread.currentThread().isInterrupted()) {
                 String msg = puller.pull();
-                if(this.handle != null){
+                if (this.handle != null) {
                     this.handle.handle(msg);
                 }
-                if(puller.isEndMsg(msg)){
+                if (puller.isEndMsg(msg)) {
                     break;
                 }
             }
@@ -36,21 +38,22 @@ public class StockQuotationService {
         }
     }
 
-    public static class DayQuotationPusher{
+    public static class DayQuotationPusher {
         private Pusher pusher;
-        public DayQuotationPusher(String url){
+
+        public DayQuotationPusher(String url) {
             this.pusher = new Pusher(url);
             System.out.println("pusher url: " + url);
         }
 
-        public void pushing(){
+        public void pushing() {
             this.pusher.bind();
 
             int cnt = 0;
-            while(!Thread.currentThread().isInterrupted()){
+            while (!Thread.currentThread().isInterrupted()) {
                 String msg = String.format("Push %d msg from--> %s", cnt++, this.pusher.getUrl());
                 this.pusher.push(msg);
-                if(cnt >= 20){
+                if (cnt >= 20) {
                     this.pusher.pushEndMsg();
                     break;
                 }
@@ -59,9 +62,10 @@ public class StockQuotationService {
         }
     }
 
-    public static class PusherThread extends  Thread{
+    public static class PusherThread extends Thread {
         private DayQuotationPusher pusher;
-        public PusherThread(String url){
+
+        public PusherThread(String url) {
             this.pusher = new DayQuotationPusher(url);
         }
 
@@ -72,20 +76,22 @@ public class StockQuotationService {
         }
     }
 
-    public static class Client{
+    public static class Client {
 
         private Requester req;
-        public Client(String serverUrl){
+
+        public Client(String serverUrl) {
             this.req = new Requester(serverUrl);
             this.req.connect(); // block and wait for server(reply) bind
         }
-        public String call(String topic, String stockCode, String startDate, String endDate){
+
+        public String call(String topic, String stockCode, String startDate, String endDate) {
             //TODO: req.send(String.format("%s %s %s %s", topic, stockCode, startDate, endDate), 0);
             req.send(topic);
             return this.req.recv();
         }
 
-        public DayQuotationPuller makePuller(String url, DayQuotationPuller.Handler handle){
+        public DayQuotationPuller makePuller(String url, DayQuotationPuller.Handler handle) {
             return new DayQuotationPuller(url, handle);
         }
 
@@ -94,8 +100,9 @@ public class StockQuotationService {
         }
     }
 
-    public static interface IService{
+    public static interface IService {
         public String server(String topic, String stockCode, String startDate, String endDate);
+
         public void close();
     }
 
@@ -107,10 +114,9 @@ public class StockQuotationService {
         }
 
         public void addService(String topic, IService service) {
-            if(topicMethodMap.containsKey(topic)) {
+            if (topicMethodMap.containsKey(topic)) {
                 topicMethodMap.replace(topic, service);
-            }
-            else{
+            } else {
                 topicMethodMap.put(topic, service);
             }
         }
@@ -120,6 +126,7 @@ public class StockQuotationService {
         }
 
         private HashMap<String, IService> topicMethodMap = new HashMap<>();
+
         public void run() {
             rep.bind();
             System.out.println("server runing...");
@@ -141,7 +148,7 @@ public class StockQuotationService {
             }
         }
 
-        public void close(){
+        public void close() {
             Iterator iter = topicMethodMap.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry<String, IService> entry = (Map.Entry<String, IService>) iter.next();

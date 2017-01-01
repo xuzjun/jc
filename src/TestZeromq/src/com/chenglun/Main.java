@@ -14,7 +14,6 @@ public class Main {
         testPush();
 
 
-
     }
 
     private static void request() {
@@ -35,7 +34,7 @@ public class Main {
         ZMQ.Context context = ZMQ.context(1);
 
         ZMQ.Socket socket = context.socket(ZMQ.REP);
-        socket.bind ("tcp://*:5555");
+        socket.bind("tcp://*:5555");
         int i = 0;
         int number = 0;
         while (!Thread.currentThread().isInterrupted()) {
@@ -54,7 +53,7 @@ public class Main {
         context.term();
     }
 
-    private static void sleep(int ms){
+    private static void sleep(int ms) {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
@@ -63,7 +62,7 @@ public class Main {
 
     }
 
-    private static void testPush(){
+    private static void testPush() {
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -92,7 +91,7 @@ public class Main {
         t.start();
     }
 
-    private static void testPull(){
+    private static void testPull() {
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -104,7 +103,7 @@ public class Main {
                 System.out.println("puller connected");
 
                 Main.sleep(10000);
-                byte [] msg = puller.recv();
+                byte[] msg = puller.recv();
                 System.out.println("puller recved");
 
                 System.out.println("pull msg from push :" + new String(msg));

@@ -22,5 +22,6 @@
     <orderEntry type="library" name="io.grpc:grpc-netty:1.0.3" level="project" />
     <orderEntry type="library" name="io.grpc:grpc-protobuf:1.0.3" level="project" />
     <orderEntry type="library" name="io.grpc:grpc-stub:1.0.3" level="project" />
+    <orderEntry type="library" name="junit:junit:4.12" level="project" />
   </component>
 </module>

@@ -12,29 +12,31 @@ public class Requester {
     private ZMQ.Context context;
     private String url;
 
-    public Requester(String url){
+    public Requester(String url) {
         this.context = ZMQ.context(1);
         this.req = context.socket(ZMQ.REQ);
         this.url = url;
     }
-    public void connect(){
+
+    public void connect() {
         this.req.connect(url);
     }
 
-    public void send(String msg){
+    public void send(String msg) {
         this.req.send(msg.getBytes(), 0);
     }
-    public String recv(){
+
+    public String recv() {
         byte[] bytes = this.req.recv();
         return new String(bytes);
     }
 
-    public void close(){
-        if(req != null){
+    public void close() {
+        if (req != null) {
             req.close();
             req = null;
         }
-        if(context != null){
+        if (context != null) {
             context.term();
             context = null;
         }

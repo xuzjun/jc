@@ -13,30 +13,32 @@ public class Puller {
     private String url;
     private ZMQ.Context context;
     private ZMQ.Socket puller;
-    public Puller(String url){
+
+    public Puller(String url) {
         this.url = url;
 
         context = ZMQ.context(1);
         puller = context.socket(ZMQ.PULL);
     }
 
-    public void connect(){
+    public void connect() {
         this.puller.connect(this.url);
     }
 
-    public String pull(){
+    public String pull() {
         return new String(this.puller.recv(0));
     }
-    public boolean isEndMsg(String msg){
-       return END_MSG.equals(msg);
+
+    public boolean isEndMsg(String msg) {
+        return END_MSG.equals(msg);
     }
 
-    public void close(){
-        if(puller != null){
+    public void close() {
+        if (puller != null) {
             this.puller.close();
             this.puller = null;
         }
-        if(context != null){
+        if (context != null) {
             this.context.term();
             this.context = null;
         }

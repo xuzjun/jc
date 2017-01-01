@@ -12,36 +12,37 @@ public class Pusher {
 
     public final String END_MSG = "";
 
-    public String getUrl(){
+    public String getUrl() {
         return url;
     }
 
-    public Pusher(String url){
+    public Pusher(String url) {
         this.url = url;
         context = ZMQ.context(1);
         pusher = context.socket(ZMQ.PUSH);
     }
 
-    public void bind(){
+    public void bind() {
         this.pusher.bind(this.url);
     }
 
-    public void push(String msg){
-        if(msg != null)
+    public void push(String msg) {
+        if (msg != null)
             this.pusher.send(msg.getBytes(), 0);
         else
             ;//Error Handler && log
     }
-    public void pushEndMsg(){
+
+    public void pushEndMsg() {
         this.push(END_MSG);
     }
 
-    public void close(){
-        if(pusher != null){
+    public void close() {
+        if (pusher != null) {
             pusher.close();
             pusher = null;
         }
-        if(context != null){
+        if (context != null) {
             context.term();
             context = null;
         }

@@ -88,31 +88,5 @@ public class MainTest {
         Server();
         BlockClient();
         //Sleep(10000);
-
-    }
-
-
-
-    //TODO:
-    public void grpcServer(){
-        Thread sh = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url = "tcp://localhost:6666";
-                StockQuotationService.Server s = new StockQuotationService.Server(url);
-                s.addService("topic_stock_day_quotation",new Service());
-                s.run();
-                s.close();
-            }
-        });
-        sh.start();
-    }
-    public void grpcClient(){
-
-    }
-    @Test
-    public void testThriftServer(){
-        grpcServer();
-        grpcClient();
     }
 }

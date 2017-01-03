@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ab186ea5-1779-47ee-b45e-a9d65e183f19" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Test/com/chenglun/MainTest.java" afterPath="$PROJECT_DIR$/Test/com/chenglun/MainTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../grpc_final/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../grpc_final/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="ab186ea5-1779-47ee-b45e-a9d65e183f19" name="Default" comment="" />
     <ignored path="TestZeromq.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -223,7 +219,7 @@
     <property name="project.structure.side.proportion" value="0.29310346" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../grpc_final" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Tool" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="FullScreen" value="true" />

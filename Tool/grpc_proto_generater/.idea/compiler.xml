@@ -23,10 +23,12 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="grpc_final" />
+        <module name="grpc_proto_generater" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="grpc_final" target="1.5" />
+      <module name="grpc_proto_generater" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,25 +1,9 @@
-include ./mk/Makefile.include
-
-
-TARGET_BIN=main
-
-
-MY_FLAGS= -g -Werror
-
-#TODO: CXX_SRC=$(wild *.cpp)
-#TODO: C_SRC=$(wild *.cpp)
-#OBJS = $(CXX_OBJS) $(C_OBJS)
-OBJS = a.o
-
-
-CXXFLAGS += $(MY_FLAGS) 
-
-all: $(TARGET_BIN)
-
-$(TARGET_BIN): $(OBJS)
-	$(ECHO) "OK"
-	$(CXX) -o $(TARGET_BIN) $^
-
+all:
+	make -C lib
+	make -C third	
+	make -C svr
 
 clean:
-	$(RM) -frv $(TARGET_BIN) *.o
+	make -C lib 	clean
+	make -C third	clean
+	make -C svr		clean

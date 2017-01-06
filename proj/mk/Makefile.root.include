@@ -2,30 +2,34 @@
 #TODO: release version
 #TODO: static && dynamic libs
 
-PROJ_ROOT_SRC_PATH=.
+
+#-- alias
+ECHO = echo
+HIDE = 
+MV	= mv
+MKDIR = mkdir -p
+
+
+#-- deduce the abspath of the project root
+MK_ROOT_INC_DIR := $(dir $(word 2, $(MAKEFILE_LIST)))
+MK_ROOT_INC_RELATE_TO_SRC_ROOT := ..
+PROJ_ROOT_SRC_PATH := $(abspath $(MK_ROOT_INC_DIR)$(MK_ROOT_INC_RELATE_TO_SRC_ROOT))
+
 
 PROJ_CFLAGS 	= 	#c compile flags
 PROJ_CXXFLAGS 	= 	#cxx  compile flags
 PROJ_LDFLAGS 	=  	#ld compile flags
 PROJ_INC_PATHES =	#inc pathes for compile
 PROJ_LIB_PATHES = 	#libs pathes for link
-PROJ_LIB_NAMES 	=   m c pthread dl
-
-
-#-- alias
-ECHO = echo
-HIDE = @
-MV	= mv
-MKDIR = mkdir -p
-
+PROJ_LIB_NAMES 	=   
 
 #-- customer rules
-PROJ_CXXFLAGS += -g -Werror 
+PROJ_CXXFLAGS += -g -Wall -Werror -finline-functions -pipe -Wshadow
 PROJ_CXXFLAGS += $(PROJ_INC_PATHES)
 PROJ_CFLAGS += $(PROJ_INC_PATHES)
 
 #add customer rule for default variable
-CXXFLAGS += $(PROJ_FLAGS) 
+CXXFLAGS += $(PROJ_CXXFLAGS) 
 CFLAGS += $(PROJ_CFLAGS)
 LDFLAGS += $(PROJ_LDFLAGS)
 LOADLIBES += $(addprefix -L, $(PROJ_LIB_PATHES)) 
@@ -38,11 +42,11 @@ OBJS 		= $(CXX_OBJS) $(C_OBJS)
 TARGET_BIN 	= main
 
 
-
 #-- TODO install rule
 PROJ_INSTALL_ROOT = $(PROJ_ROOT_SRC_PATH)/install
 
 
 #-- DO Operations
-DO_TARGET 	= $(HIDE)$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+DO_CPP_TARGET 	= $(HIDE)$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
+DO_C_TARGET 	= $(HIDE)$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 DO_CLEAN 	= $(HIDE)$(RM) -frv $(TARGET_BIN) $(OBJS)

@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Dec 29 15:56:19 2016
-@author: zj
+Created on Thu Jan 05 17:40:15 2017
+
+@author: dell
 """
 
+import os
 import pricecsv_pb2
+
+def listdir(path):
+    pathdir = os.listdir(path)
+    for fname in pathdir:
+        childpath = os.path.join('%s\\\%s' %(path, fname))
+        print childpath
+        
 
 def read_file(infilename):
     try:
@@ -65,14 +74,12 @@ def handle_inputdata(datas):
     return list_serial
         
     
-def main(in_file, out_file):
-    # 1、read the csv 
+def transform(in_file, out_file):
     datelines = read_file(in_file)
     if datelines == [] or datelines == None:
         print "read blank file"
         return None
   
-    # 2、handle the date
     serialdata = handle_inputdata(datelines)
     if serialdata == [] or serialdata == None:
         print "serial data wrong"
@@ -85,9 +92,31 @@ def main(in_file, out_file):
 
     print "done"
     return 0
+
+def main(srcpath, despath):
+    
+    pathdir = os.listdir(srcpath)
+    for fname in pathdir:
+        desname = fname[0:-4]
+        outpath = os.path.join('%s\\\%s' %(despath, desname))
+        print outpath
+        inpath = os.path.join('%s\\\%s' %(srcpath, fname))
+        print inpath
+        ret = transform(inpath, outpath)
+        if ret != 0:
+            print "sth wrong in transform process"
+            return None
+    print "write in success!"
+    return 0
+        
     
 if __name__ == "__main__":
     
-    infile = "C:\workmenu\protobuf\\600000.csv"
-    outfile = "C:\workmenu\protobuf\\600000"
-    main(infile, outfile)
+    srcmenu = "C:\workmenu\protobuf\src"
+    desmenu = "C:\workmenu\protobuf\des"
+    main(srcmenu, desmenu)
+
+
+
+
+    

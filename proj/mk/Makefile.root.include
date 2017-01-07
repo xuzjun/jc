@@ -24,7 +24,7 @@ PROJ_LIB_PATHES = 	#libs pathes for link
 PROJ_LIB_NAMES 	=   
 
 #-- customer rules
-PROJ_CXXFLAGS += -g -Wall -Werror -finline-functions -pipe -Wshadow
+PROJ_CXXFLAGS += -g -Wall -Werror -pipe -Wshadow
 PROJ_CXXFLAGS += $(PROJ_INC_PATHES)
 PROJ_CFLAGS += $(PROJ_INC_PATHES)
 

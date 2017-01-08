@@ -5,24 +5,20 @@
 void * Thread::ThreadEntry(void * ctx){
     Thread * thread = static_cast<Thread*>(ctx);
     assert(thread != NULL);
-    assert( thread->_run);
-    thread->_run->run(); 
+    assert(thread->_run);
+    thread->_run->run();
     return NULL;
 }
 
-Thread::Thread(IRunnable * r)
+Thread::Thread(IRunnable *  r)
 :_run(r){
 }
 
-Thread * Thread::make(IRunnable * r){
-    return new Thread(r);
-}
-Thread & Thread::makeRef(IRunnable * r){
-    return  *(Thread::make(r));
+std::shared_ptr<Thread> Thread::make(IRunnable * r){
+    return std::make_shared<Thread>(r);
 }
 
 Thread::~Thread(){
-    _run = NULL;
 }
 
 void Thread::start(){

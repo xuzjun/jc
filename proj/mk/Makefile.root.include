@@ -21,19 +21,20 @@ PROJ_CXXFLAGS 	= 	#cxx  compile flags
 PROJ_LDFLAGS 	=  	#ld compile flags
 PROJ_INC_PATHES =	#inc pathes for compile
 PROJ_LIB_PATHES = 	#libs pathes for link
-PROJ_LIB_NAMES 	=   
+PROJ_LIB_NAMES 	=   # libXXX.a or libXXX.so format
+PROJ_LIB_FULL_NAMES =  # whole name for libs
 
 #-- customer rules
 PROJ_CXXFLAGS += -g -Wall -Werror -pipe -Wshadow
-PROJ_CXXFLAGS += $(PROJ_INC_PATHES)
-PROJ_CFLAGS += $(PROJ_INC_PATHES)
+PROJ_CXXFLAGS += $(addprefix -I, $(PROJ_INC_PATHES))
+PROJ_CFLAGS += $(addprefix -I, $(PROJ_INC_PATHES))
 
 #add customer rule for default variable
 CXXFLAGS += $(PROJ_CXXFLAGS) 
 CFLAGS += $(PROJ_CFLAGS)
 LDFLAGS += $(PROJ_LDFLAGS)
 LOADLIBES += $(addprefix -L, $(PROJ_LIB_PATHES)) 
-LDLIBS   += $(addprefix -l, $(PROJ_LIB_NAMES))
+LDLIBS   += $(addprefix -l, $(PROJ_LIB_NAMES)) $(PROJ_LIB_FULL_NAMES)
 
 #-- source code && objects
 CXX_OBJS	=$(patsubst %.cpp,%.o, $(wildcard *.cpp))
@@ -49,4 +50,4 @@ PROJ_INSTALL_ROOT = $(PROJ_ROOT_SRC_PATH)/install
 #-- DO Operations
 DO_CPP_TARGET 	= $(HIDE)$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
 DO_C_TARGET 	= $(HIDE)$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
-DO_CLEAN 	= $(HIDE)$(RM) -frv $(TARGET_BIN) $(OBJS)
+DO_CLEAN 	= $(HIDE)$(RM) -rv $(TARGET_BIN) $(OBJS)

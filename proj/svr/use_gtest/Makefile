@@ -1,15 +1,16 @@
 include ../../mk/Makefile.root.include
 include ../../mk/Makefile.libs.include
 
-PROJ_CXXFLAGS 	+= -std=c++11	#cxx  compile flags
-TARGET_BIN :=main
 
+PROJ_INC_PATHES 		+= $(GTEST_INCLUDE_PATH)
+PROJ_LIB_PATHES 		+= 
+PROJ_LIB_FULL_NAMES 	+= $(GTEST_LIB_FULL_NAME)
+
+TARGET_BIN=main
 
 all: $(TARGET_BIN)
 
 $(TARGET_BIN): $(OBJS)
-	@echo $(GTEST_INCLUDE_PATH)
 	$(DO_CPP_TARGET)
-
 clean:
 	$(DO_CLEAN)

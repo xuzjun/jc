@@ -3,20 +3,21 @@
 
 #include <pthread.h>
 #include <cassert>
+#include <memory>
 
 template <typename Value>
 class ThreadLocal{
-protected:
-    ThreadLocal(){
-       assert(0 == pthread_key_create(&_key, NULL));
+private:
+    ThreadLocal(ThreadLocal & r){
     }
 public:
-    typedef Value * ValuePtr;
-    static ThreadLocal<Value> * make(){
-        return new ThreadLocal<Value>();
+    typedef Value * ValuePtr; //weak_ptr
+    static std::shared_ptr<ThreadLocal<Value>> make(){
+        return std::make_shared<ThreadLocal<Value>>();
     }
-    static ThreadLocal<Value> & makeRef(){
-        return *(new ThreadLocal<Value>());
+
+    ThreadLocal(){
+       assert(0 == pthread_key_create(&_key, NULL));
     }
     ~ThreadLocal(){
         assert(0 == pthread_key_delete(_key));

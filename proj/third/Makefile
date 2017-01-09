@@ -1,5 +1,10 @@
+include ../mk/Makefile.root.include
+
 all:
-	@echo "third OK"
+	ln -s ./$(OS_ARCH)/gtest gtest
+	ln -s ./$(OS_ARCH)/gmock gmock
+
 
 clean:
-	@echo "third clean OK"
+	rm -frv ./gtest 
+	rm -frv ./gmock

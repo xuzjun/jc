@@ -142,16 +142,13 @@ void testWeakPtr(){
     // create weak_ptr from shared_ptr
     auto m = std::make_shared<Logger>(10);
     std::weak_ptr<Logger> w(m);
-    //
-    // test 
-    //
 }
 
-int main(int argc, char * argv[]){
+//int main(int argc, char * argv[]){
 //    testThreadLocal();
 //    testThreadLocalInMultiThread();
 //    testThread();
-    testLogger();
+//    testLogger();
 //    testSharedPtr();
-    return 0;
-}
+//   return 0;
+//}

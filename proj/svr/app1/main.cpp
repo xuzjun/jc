@@ -1,86 +1,101 @@
 #include <iostream>
+#include "gtest/gtest.h"
 #include "ThreadLocal.h"
 #include "IRunnable.h"
 #include "Thread.h"
-#include <memory>
+#include "BuilderHelper.h"
+
+#include "TestCaseHelper.h"
 //TODO: logger
-//TODO: use gtest & gmock
 
+class Runner : public IRunnable{
+public:
+    Runner(_Base & b){}
+    Runner(){}
+    ~Runner(){}
 
-void testThreadLocal(){
-    auto tl = ThreadLocal<int>::make();
-    int i = 10;
-    tl->set(&i);
-    assert(tl->get() == &i);
-}
-
-void * routine1(void * ctx){
-    ThreadLocal<int> * pt = (ThreadLocal<int> *) ctx;
-
-    assert(pt->get() == NULL);
-
-    int i =0 ;
-    if(pt->get() == NULL)
-        pt->set(&i);
-    assert(pt->get() == &i);   
-    return NULL;
-}
-
-void testThreadLocalInMultiThread(){
-    auto t = ThreadLocal<int>::make();
-
-    const int th_len = 128;
-    ::pthread_t th[th_len];
-
-    for(int i =0; i < th_len; ++i){
-        ::pthread_create(th+i, NULL, routine1, t.get());
+    void run(){
+        std::cout << "do something in thread " << Thread::id() << std::endl;
     }
-
-    for(int i = th_len - 1; i >= 0; --i){
-        ::pthread_join(th[i], NULL);
-    }
+};
+//TODO: Thread::make(IRunnable & r)????
+TEST(RunnerTest, useRef){
+    _Base b;
+    Runner(b).run();
 }
+
+TEST(ThreadTest, easyUse){
+
+//    std::shared_ptr<IRunnable> runner(new Runner);
+//    auto t = Thread::make(runner.get());
+    Runner r;
+    Thread t(r);
+    t.start();
+    t.wait();
+}
+
 
 
 //Test Thread 
 class TestRoutine : public IRunnable{
-    ThreadLocal<int> * _tl;
 public:
-    TestRoutine(ThreadLocal<int> * tl)
-    :_tl(tl){
+    typedef BuilderHelper<TestRoutine> Builder;
+    TestRoutine(ThreadLocal<int> * ptl)
+    :_ptl(ptl){
     }
     virtual ~TestRoutine(){
     }
-
     void run(){
-        assert(_tl != NULL && _tl->get() == NULL);
-        //printf("thread id is :%lu\n", Thread::id());
-
+        if(_ptl == NULL){
+            printf("ERROR: threaLocal<int> is NULL!");
+            return ;
+        }
         int i =0 ;
-        if(_tl->get() == NULL)
-            _tl->set(&i);
-        assert(_tl->get() == &i);   
+        if(_ptl->get() == NULL)
+            _ptl->set(&i);
+        assert(_ptl->get() == &i);   
     }
+private:
+    ThreadLocal<int> * _ptl;
 };
 
-void testThread(){
-    auto pi = ThreadLocal<int>::make();
-    std::shared_ptr<IRunnable> r(new TestRoutine(pi.get()));
-    auto t = std::make_shared<Thread>(r.get());
-    t->start();
-    assert(t->self() == Thread::id());
-    t->wait();
+TEST(ThreadTest, useBuilder){
+    auto sptl = std::make_shared<ThreadLocal<int>>();
+    //auto p = Builder<TestRoutine>::make();
+    //p->run();
+
+    auto p1 = TestRoutine::Builder::make(sptl.get());
+    p1->run();
+    delete p1;
+
+    auto p3 = TestRoutine::Builder::make_shared(sptl);
+    p3->run();
+}
+
+/*  
+
+TEST(ThreadTest, useThreadLocal){
+    ThreadLocal<int> pi;
+    TestRoutine r(pi);
+
+    Thread thread(r);
+    thread.start();
+    ASSERT_TRUE(thread.self() == Thread::id());
+    thread.wait();
+    
 
     const int thread_len = 128;
     std::shared_ptr<Thread> tarr[thread_len];
     for( int i = 0 ; i < thread_len; ++i){
-        tarr[i] = std::make_shared<Thread>(r.get()); 
+        tarr[i] = std::make_shared<Thread>(r); 
         tarr[i]->start();
     }
     for(int i =0; i < thread_len; ++i){
         tarr[i]->wait();
     }
 }
+
+
 
 class Logger{
 public:
@@ -119,9 +134,11 @@ private:
     ThreadLocal<Logger> * _tl_log;
 };
 
-void testLogger(){
+TEST(ThreadTest, runLogger){
     auto tl_log = ThreadLocal<Logger>::make();
     std::shared_ptr<IRunnable> r(new RunLogger(tl_log.get()));
+
+
     auto t1 = Thread::make(r.get());
     t1->start();
 
@@ -131,24 +148,4 @@ void testLogger(){
     t1->wait();
     t2->wait();
 }
-
-void  testSharedPtr(){
-    //std::shared_ptr<Logger> plogger(new Logger);
-    //auto plogger = std::make_shared<Logger>();
-    auto plogger = std::make_shared<Logger>(10);
-    plogger->info("shared ptr");
-}
-void testWeakPtr(){
-    // create weak_ptr from shared_ptr
-    auto m = std::make_shared<Logger>(10);
-    std::weak_ptr<Logger> w(m);
-}
-
-//int main(int argc, char * argv[]){
-//    testThreadLocal();
-//    testThreadLocalInMultiThread();
-//    testThread();
-//    testLogger();
-//    testSharedPtr();
-//   return 0;
-//}
+*/

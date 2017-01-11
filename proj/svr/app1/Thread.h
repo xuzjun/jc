@@ -9,18 +9,18 @@ class IRunnable;
 
 class Thread{
 private:
-    Thread(IRunnable * r);
 public:
-    typedef unsigned long ThreadIdType;
 
     static std::shared_ptr<Thread> make(IRunnable * r);
+    static std::shared_ptr<Thread> make(std::shared_ptr<IRunnable> spr);
 
-    Thread(IRunnable & r);
+    Thread(IRunnable * r);
     ~Thread();
 
     void start();
     void wait();
 
+    typedef unsigned long ThreadIdType;
     static ThreadIdType id();
     ThreadIdType self();
 
@@ -28,7 +28,7 @@ private:
     static void * ThreadEntry(void * ctx);
 private:
     pthread_t _thread;
-    IRunnable & _run;
+    IRunnable * _run;
 };
 
 

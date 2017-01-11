@@ -3,51 +3,58 @@
 #include "ThreadLocal.h"
 #include "IRunnable.h"
 #include "Thread.h"
-#include "BuilderHelper.h"
+#include "Builder.h"
 
 #include "TestCaseHelper.h"
 //TODO: logger
+//TODO: isolate the UT  dir
 
-class Runner : public IRunnable{
+class FRunner : public IRunnable{
 public:
-    Runner(_Base & b){}
-    Runner(){}
-    ~Runner(){}
+    
+    static std::shared_ptr<IRunnable> make(){
+        return BuilderSptr<FRunner>::make();
+    }
+    FRunner(){ 
+        printf("constructor\n");
+    }
+    virtual ~FRunner(){
+        printf("destructor\n");
+    }
 
-    void run(){
+    virtual void run(){
         std::cout << "do something in thread " << Thread::id() << std::endl;
     }
 };
-//TODO: Thread::make(IRunnable & r)????
-TEST(RunnerTest, useRef){
-    _Base b;
-    Runner(b).run();
+TEST(FRunnerTest, easyUse){
+    auto pir = FRunner::make();
+    auto thread = Thread::make(pir);
+        
+    thread->start();
+    thread->wait();
 }
-
-TEST(ThreadTest, easyUse){
-
-//    std::shared_ptr<IRunnable> runner(new Runner);
-//    auto t = Thread::make(runner.get());
-    Runner r;
-    Thread t(r);
-    t.start();
-    t.wait();
-}
-
-
 
 //Test Thread 
 class TestRoutine : public IRunnable{
 public:
-    typedef BuilderHelper<TestRoutine> Builder;
-    TestRoutine(ThreadLocal<int> * ptl)
-    :_ptl(ptl){
+    typedef ThreadLocal<int> ThreadLocalType;
+    
+    static std::shared_ptr<IRunnable> make(std::shared_ptr<ThreadLocalType> sp){
+        return BuilderSptrSptr<TestRoutine>::make(sp);
+    }
+    static std::shared_ptr<IRunnable> make(ThreadLocalType* ptr){
+        return BuilderSptr<TestRoutine>::make(ptr);
+    }
+
+    TestRoutine(ThreadLocalType * ptl):_ptl(ptl){
+        printf("constructor\n");
     }
     virtual ~TestRoutine(){
+        printf("destructor\n");
     }
-    void run(){
+    virtual void run(){
         if(_ptl == NULL){
-            printf("ERROR: threaLocal<int> is NULL!");
+            printf("Error: thread local <int> is NULL\n");
             return ;
         }
         int i =0 ;
@@ -56,47 +63,28 @@ public:
         assert(_ptl->get() == &i);   
     }
 private:
-    ThreadLocal<int> * _ptl;
+    ThreadLocalType *_ptl;
 };
 
-TEST(ThreadTest, useBuilder){
-    auto sptl = std::make_shared<ThreadLocal<int>>();
-    //auto p = Builder<TestRoutine>::make();
-    //p->run();
-
-    auto p1 = TestRoutine::Builder::make(sptl.get());
-    p1->run();
-    delete p1;
-
-    auto p3 = TestRoutine::Builder::make_shared(sptl);
-    p3->run();
-}
-
-/*  
-
 TEST(ThreadTest, useThreadLocal){
-    ThreadLocal<int> pi;
-    TestRoutine r(pi);
+    auto sptl = std::make_shared<ThreadLocal<int>>();
+    auto trt = TestRoutine::make(sptl);
+    auto thread = Thread::make(trt);
 
-    Thread thread(r);
-    thread.start();
-    ASSERT_TRUE(thread.self() == Thread::id());
-    thread.wait();
-    
+    thread->start();
+    ASSERT_TRUE(thread->self() == Thread::id());
+    thread->wait();
 
     const int thread_len = 128;
     std::shared_ptr<Thread> tarr[thread_len];
     for( int i = 0 ; i < thread_len; ++i){
-        tarr[i] = std::make_shared<Thread>(r); 
+        tarr[i] = Thread::make(trt);
         tarr[i]->start();
     }
     for(int i =0; i < thread_len; ++i){
         tarr[i]->wait();
     }
 }
-
-
-
 class Logger{
 public:
     void info(const char * msg){
@@ -115,7 +103,13 @@ public:
 
 class RunLogger : public IRunnable {
 public:
-    RunLogger(ThreadLocal<Logger>* tl_log)
+    typedef ThreadLocal<Logger> ThreadLocalType;
+
+    static std::shared_ptr<IRunnable> make(std::shared_ptr<ThreadLocalType> sp){
+        return BuilderSptrSptr<RunLogger>::make(sp);
+    }
+
+    RunLogger(ThreadLocalType * tl_log)
     :_tl_log(tl_log){
     }
     virtual ~RunLogger(){
@@ -125,27 +119,25 @@ public:
             _tl_log->set(new Logger);
         return _tl_log->get();
     }
-    void run(){
+    virtual void run(){
         char buf[128];
         snprintf(buf, sizeof(buf), "%s:%lu", "hell world", Thread::id());
         getLogger()->info(buf);
+
     }
 private:
-    ThreadLocal<Logger> * _tl_log;
+    ThreadLocalType * _tl_log;
 };
 
 TEST(ThreadTest, runLogger){
     auto tl_log = ThreadLocal<Logger>::make();
-    std::shared_ptr<IRunnable> r(new RunLogger(tl_log.get()));
-
-
-    auto t1 = Thread::make(r.get());
+    auto r = RunLogger::make(tl_log);
+    auto t1 = Thread::make(r);
     t1->start();
 
-    auto t2 = Thread::make(r.get());
+    auto t2 = Thread::make(r);
     t2->start();
 
     t1->wait();
     t2->wait();
 }
-*/

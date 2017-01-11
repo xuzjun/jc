@@ -1,25 +1,32 @@
 #include "Thread.h"
 #include "IRunnable.h"
+#include "Builder.h"
 #include <cassert>
+#include <stdio.h>
 
 void * Thread::ThreadEntry(void * ctx){
     Thread * thread = static_cast<Thread*>(ctx);
-    assert(thread != NULL);
-    thread->_run.run();
+    if(thread && thread->_run){
+        thread->_run->run();
+    }
+    else  if(thread == NULL){
+        printf("ERROR: Thread is NULL");
+    }
+    else{ //(thread->_run == NULL){
+        printf("ERROR thread->_run is NULL");
+    }
     return NULL;
 }
 
-Thread::Thread(IRunnable &  r)
+Thread::Thread(IRunnable *  r)
 :_run(r){
 }
 
-Thread::Thread(IRunnable * pr)
-:_run(*pr){
-}
-
 std::shared_ptr<Thread> Thread::make(IRunnable * r){
-    assert(r);
-    return std::make_shared<Thread>(*r);
+    return BuilderSptr<Thread>::make(r);
+}
+std::shared_ptr<Thread> Thread::make(std::shared_ptr<IRunnable> spr){
+    return BuilderSptrSptr<Thread>::make(spr);
 }
 
 Thread::~Thread(){

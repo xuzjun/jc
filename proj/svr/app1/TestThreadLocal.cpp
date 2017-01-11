@@ -22,7 +22,7 @@ static void * routine1(void * ctx){
 TEST(ThreadLocal, useInMultiThread){
     auto t = ThreadLocal<int>::make();
 
-    const int th_len = 300; //TODO:  why 500 for wait??
+    const int th_len = 100; //32bit 384*8192K(thread stack size)
     ::pthread_t th[th_len];
 
     for(int i =0; i < th_len; ++i){

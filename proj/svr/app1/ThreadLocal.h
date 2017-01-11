@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <cassert>
 #include <memory>
+#include "Builder.h"
 
 template <typename Value>
 class ThreadLocal{
@@ -13,7 +14,7 @@ private:
 public:
     typedef Value * ValuePtr; //weak_ptr
     static std::shared_ptr<ThreadLocal<Value>> make(){
-        return std::make_shared<ThreadLocal<Value>>();
+        return BuilderSptr<ThreadLocal<Value>>::make();
     }
 
     ThreadLocal(){

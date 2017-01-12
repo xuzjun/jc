@@ -119,18 +119,32 @@ public:
             _tl_log->set(new Logger);
         return _tl_log->get();
     }
+#define LOG_INFO(msg)  getLogger()->info(msg)
     virtual void run(){
         char buf[128];
-        snprintf(buf, sizeof(buf), "%s:%lu", "hell world", Thread::id());
-        getLogger()->info(buf);
-
+        snprintf(buf, sizeof(buf), "sub thread: %s:%lu\n", "hell world", Thread::id());
+        LOG_INFO(buf);
+        LOG_INFO("sub thread---hello world\n");
     }
 private:
     ThreadLocalType * _tl_log;
 };
 
+
+//TODO:  Logger implementation
+#define GLOBAL_LOG    "TODO"
+auto tl_log = ThreadLocal<Logger>::make();
+Logger * getLogger(){
+    if(tl_log->get() == NULL)
+        tl_log->set(new Logger);
+    return tl_log->get();
+}
+
+
 TEST(ThreadTest, runLogger){
-    auto tl_log = ThreadLocal<Logger>::make();
+    //auto tl_log = ThreadLocal<Logger>::make();
+    LOG_INFO("from main thread\n");
+
     auto r = RunLogger::make(tl_log);
     auto t1 = Thread::make(r);
     t1->start();

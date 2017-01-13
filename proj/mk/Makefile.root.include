@@ -44,8 +44,8 @@ LDLIBS   	+= $(addprefix -l, $(PROJ_LIB_NAMES)) \
 				$(add prefix -l, $(PROJ_DYNAMIC_LIBS))
 
 #-- source code && objects
-CXX_OBJS	=$(patsubst %.cpp,%.o, $(wildcard *.cpp))
-C_OBJS		=$(patsubst %.c,%.o, $(wildcard *.c))
+CXX_OBJS	= $(patsubst %.cpp,%.o, $(wildcard *.cpp))
+C_OBJS		= $(patsubst %.c,%.o, $(wildcard *.c))
 OBJS 		= $(CXX_OBJS) $(C_OBJS)
 TARGET_BIN 	= main
 

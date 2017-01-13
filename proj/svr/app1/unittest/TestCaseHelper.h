@@ -2,7 +2,6 @@
 #ifndef  TESTCASEHELPER_H
 #define  TESTCASEHELPER_H
 
-
 class _Base{
 public:
     _Base();
